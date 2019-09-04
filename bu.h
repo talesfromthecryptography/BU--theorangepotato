@@ -59,7 +59,7 @@ void bu_sqr(bigunsigned *a_ptr, bigunsigned *b_ptr);
 // a *= a
 void bu_sqr_ip(bigunsigned *a_ptr);
 
-
+// Count of the bits, excluding leading 0s
 uint16_t bu_len(bigunsigned *a_ptr);
 
 // Convert single ascii character hex digit to numerical value
