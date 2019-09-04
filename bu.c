@@ -1,39 +1,35 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdint.h>
-#include <ctype.h>
-#define BU_DIGITS 256
-#define BU_MAX_HEX (BU_DIGITS<<3)
-#define BU_BITS (BU_DIGITS<<5)
-#define BU_BITS_PER_DIGIT 32
+#include <string.h> // for memset, etc.
+#include <stdio.h>  // for printf
 
+#include "bu.h"
 
-typedef struct {
-  uint32_t digit[BU_DIGITS];
-  uint16_t used;  // number of non-leading zero digits
-  uint8_t base;  // start from this index
-} bigunsigned;
+// NOTE: In this code "word" always refers to a uint32_t
 
+// Copy dest = src
+void bu_cpy(bigunsigned *dest, bigunsigned *src) {
+  uint16_t cnt = src->used;
+  dest->used = cnt;
+  dest->base = 0;
 
+  // reset upper 0s in dest
+  memset(dest->digit, 0, sizeof(uint32_t)*BU_DIGITS-cnt);
 
-// Convert single ascii character hex digit to numerical value
-// Assumes given a true hex digit, can be lower or upper case
-// 
-uint8_t hex2bin(char c) {
-  if ('0' <= c && c <= '9')
-    return c - '0';
-  else
-    return tolower(c)-'a' + 0xa;
+  uint8_t i_dest = 0; // TODO: This is wrong. Fix it.
+  uint8_t i_src = src->base;
+
+  while (cnt-- > 0) {
+    dest->digit[i_dest--] = src->digit[i_src--];
+  }
 }
 
-// Set big unsigned to 0
+// Set to 0
 void bu_clear(bigunsigned *a_ptr) {
   memset(a_ptr->digit, 0, sizeof(uint32_t)*BU_DIGITS);
   a_ptr->used = 0;
   a_ptr->base = 0;
 }
 
-// Shift in place a big unsigned by cnt bits to the left
+// Shift in place a bigunsigned by cnt bits to the left
 // Example: beef shifted by 4 results in beef0
 void bu_shl_ip(bigunsigned* a_ptr, uint16_t cnt) {
   uint16_t wrds = cnt >> 5; // # of whole words to shift
@@ -41,7 +37,7 @@ void bu_shl_ip(bigunsigned* a_ptr, uint16_t cnt) {
 
   uint32_t mask = 0xffffffff << bits;
 
-  // You implement. Avoid memory copying a much as possible.
+  // You implement. Avoid memory copying as much as possible.
 }
 
 // Produce a = b + c
@@ -96,20 +92,6 @@ void bu_add(bigunsigned *a_ptr, bigunsigned *b_ptr, bigunsigned *c_ptr) {
   a_ptr->base = 0;
   a_ptr->used = cnt;
 }
-void bu_cpy(bigunsigned *dest, bigunsigned *src) {
-  uint16_t cnt = src->used;
-  dest->used = cnt;
-  dest->base = 0;
-  memset(dest->digit, 0, sizeof(uint32_t)*BU_DIGITS-cnt);
-
-  uint8_t i_dest = 0;
-  uint8_t i_src = src->base;
-
-  while (cnt-- > 0) {
-    dest->digit[i_dest--] = src->digit[i_src--];
-  }
-
-}
 
 // return the length in bits (should always be less or equal to 32*a->used)
 uint16_t bu_len(bigunsigned *a_ptr) {
@@ -117,13 +99,20 @@ uint16_t bu_len(bigunsigned *a_ptr) {
   uint32_t bit_mask = 0x80000000;
   uint32_t last_wrd = a_ptr->digit[a_ptr->base+a_ptr->used-1];
 
-  printf("Last %x", last_wrd);
-  while (bit_mask && (last_wrd&bit_mask)==0) {
+  while (bit_mask && !(last_wrd&bit_mask)) {
     bit_mask >>= 1;
     res--;
   }
   return res;
 }
+
+// Read from a string of hex digits
+//
+// TODO: This is wrong. See the test main.c
+//       Modify to resolve 'endian' conflict.
+//       Also modify to permit strings to include whitespace
+//        that will be ignored. For example, "DEAD BEEF" should
+//        be legal input resulting in the value 0xDEADBEEF.
 
 void bu_readhex(bigunsigned * a_ptr, char *s) {
   bu_clear(a_ptr);
@@ -138,22 +127,13 @@ void bu_readhex(bigunsigned * a_ptr, char *s) {
   a_ptr->used = (pos>>3) + ((pos&0x7)!=0);
 }
 
+// 
 void bu_dbg_printf(bigunsigned *a_ptr) {
   printf("Used %x\n", a_ptr->used);
+  printf("Base %x\n", a_ptr->base);
   uint16_t i = a_ptr->used;
   printf("Digits: ");
   while (i-- > 0)
     printf("%8x ", a_ptr->digit[a_ptr->base+i]);
-  printf("\n");
-}
-
-int main() {
-  bigunsigned a;
-  char s[BU_MAX_HEX+1];
-
-  bu_readhex(&a,"CAB51AFFBEEF");
-  bu_dbg_printf(&a);
-  printf("\n\n%d\n", bu_len(&a));
-
-  return 0;
+  printf("Length: %x\n", bu_len(a_ptr));
 }
