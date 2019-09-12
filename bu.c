@@ -95,6 +95,7 @@ void bu_add(bigunsigned *a_ptr, bigunsigned *b_ptr, bigunsigned *c_ptr) {
 
 // return the length in bits (should always be less or equal to 32*a->used)
 uint16_t bu_len(bigunsigned *a_ptr) {
+  if (a_ptr->used== 0) return 0;
   uint16_t res = a_ptr->used<<5;
   uint32_t bit_mask = 0x80000000;
   uint32_t last_wrd = a_ptr->digit[a_ptr->base+a_ptr->used-1];
