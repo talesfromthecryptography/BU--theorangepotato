@@ -119,11 +119,15 @@ void bu_readhex(bigunsigned * a_ptr, char *s) {
   bu_clear(a_ptr);
 
   unsigned pos = 0;
-  char *s_ptr = s;
-  while (*s_ptr && pos < BU_MAX_HEX) {
+  char *s_ptr = s + strlen(s) - 1;
+  while (s_ptr >= s && pos < BU_MAX_HEX) {
+    if(*s_ptr == ' ') {
+      s_ptr--;
+      continue;
+    }
     a_ptr->digit[pos>>3] |= (((uint32_t)hex2bin(*s_ptr)) << ((pos & 0x7)<<2));
     pos++;
-    s_ptr++;
+    s_ptr--;
   }
   a_ptr->used = (pos>>3) + ((pos&0x7)!=0);
 }
