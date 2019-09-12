@@ -93,7 +93,7 @@ void bu_add(bigunsigned *a_ptr, bigunsigned *b_ptr, bigunsigned *c_ptr) {
   a_ptr->used = cnt;
 }
 
-// return the length in bits (should always be less or equal to 32*a->used)
+// Return the length in bits (should always be less or equal to 32*a->used)
 uint16_t bu_len(bigunsigned *a_ptr) {
   if (a_ptr->used== 0) return 0;
   uint16_t res = a_ptr->used<<5;
@@ -108,13 +108,6 @@ uint16_t bu_len(bigunsigned *a_ptr) {
 }
 
 // Read from a string of hex digits
-//
-// TODO: This is wrong. See the test main.c
-//       Modify to resolve 'endian' conflict.
-//       Also modify to permit strings to include whitespace
-//        that will be ignored. For example, "DEAD BEEF" should
-//        be legal input resulting in the value 0xDEADBEEF.
-
 void bu_readhex(bigunsigned * a_ptr, char *s) {
   bu_clear(a_ptr);
 
@@ -132,7 +125,7 @@ void bu_readhex(bigunsigned * a_ptr, char *s) {
   a_ptr->used = (pos>>3) + ((pos&0x7)!=0);
 }
 
-// 
+// Print to stdout in hex
 void bu_dbg_printf(bigunsigned *a_ptr) {
   printf("Used %x\n", a_ptr->used);
   printf("Base %x\n", a_ptr->base);
