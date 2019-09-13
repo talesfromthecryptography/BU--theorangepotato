@@ -24,5 +24,20 @@ int main() {
   bu_clear(&d);
   bu_dbg_printf(&d);
 
+  printf("Shifting left by 1...\n");
+  bu_readhex(&d, "7FFF");
+  bu_shl_ip(&d, 1);
+  bu_dbg_printf(&d);
+
+  printf("Shifting left by 32...\n");
+  bu_readhex(&d, "7FFF");
+  bu_shl_ip(&d, 32);
+  bu_dbg_printf(&d);
+
+  printf("Shifting left by 33...\n");
+  bu_readhex(&d, "7FFF");
+  bu_shl_ip(&d, 33);
+  bu_dbg_printf(&d);
+
   return 0;
 }
