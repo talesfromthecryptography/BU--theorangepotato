@@ -52,5 +52,20 @@ int main() {
   bu_shl(&d, &c, 33);
   bu_dbg_printf(&d);
 
+  printf("Shifting right in place by 1...\n");
+  bu_readhex(&d, "0000FFFE 00000000");
+  bu_shr_ip(&d, 1);
+  bu_dbg_printf(&d);
+
+  printf("Shifting right in place by 32...\n");
+  bu_readhex(&d, "0000FFFE 00000000");
+  bu_shr_ip(&d, 32);
+  bu_dbg_printf(&d);
+
+  printf("Shifting right in place by 33...\n");
+  bu_readhex(&d, "0000FFFE 00000000");
+  bu_shr_ip(&d, 33);
+  bu_dbg_printf(&d);
+
   return 0;
 }
