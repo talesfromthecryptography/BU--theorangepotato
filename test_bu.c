@@ -67,5 +67,18 @@ int main() {
   bu_shr_ip(&d, 33);
   bu_dbg_printf(&d);
 
+  bu_readhex(&c, "0000FFFE 00000000");
+  printf("Shifting right by 1...\n");
+  bu_shr(&d, &c, 1);
+  bu_dbg_printf(&d);
+
+  printf("Shifting right by 32...\n");
+  bu_shr(&d, &c, 32);
+  bu_dbg_printf(&d);
+
+  printf("Shifting right by 33...\n");
+  bu_shr(&d, &c, 33);
+  bu_dbg_printf(&d);
+
   return 0;
 }

@@ -77,6 +77,33 @@ void bu_shl_ip(bigunsigned* a_ptr, uint16_t cnt) {
   a_ptr->used += wrds;
 }
 
+//  a = b>>cnt
+void bu_shr(bigunsigned* a_ptr, bigunsigned* b_ptr, uint16_t cnt) {
+  bu_clear(a_ptr);
+  uint16_t wrds = cnt >> 5; // # of whole words to shift
+  uint16_t bits = cnt &0x1f;// number of bits in a word to shift
+
+  if (wrds >= b_ptr->used) {
+    return;
+  }
+
+  a_ptr->used = b_ptr->used - wrds;
+
+    uint32_t mask = ~ (0xffffffff << bits);
+
+    uint8_t pos_a = 0;
+    uint8_t pos_b = b_ptr->base;
+
+    while (pos_a != a_ptr->used) {
+      a_ptr->digit[pos_a] = b_ptr->digit[pos_b + wrds] >> bits;
+      a_ptr->digit[pos_a] ^= (b_ptr->digit[pos_b + wrds + 1] & mask) << (32 - bits);
+      pos_a++;
+      pos_b++;
+    }
+
+  if (!a_ptr->digit[(a_ptr->base + a_ptr->used - 1) % BU_DIGITS]) a_ptr->used--;
+}
+
 //  a >>= cnt
 // Shift in place a big unsigned by cnt bits to the left
 // Example: beef shifted by 4 results in beef0
