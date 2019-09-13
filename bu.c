@@ -98,7 +98,7 @@ uint16_t bu_len(bigunsigned *a_ptr) {
   if (a_ptr->used== 0) return 0;
   uint16_t res = a_ptr->used<<5;
   uint32_t bit_mask = 0x80000000;
-  uint32_t last_wrd = a_ptr->digit[a_ptr->base+a_ptr->used-1];
+  uint32_t last_wrd = a_ptr->digit[(a_ptr->base+a_ptr->used-1) % BU_DIGITS];
 
   while (bit_mask && !(last_wrd&bit_mask)) {
     bit_mask >>= 1;
@@ -132,6 +132,6 @@ void bu_dbg_printf(bigunsigned *a_ptr) {
   uint16_t i = a_ptr->used;
   printf("Digits: ");
   while (i-- > 0)
-    printf("%8x ", a_ptr->digit[a_ptr->base+i]);
+    printf("%08x ", a_ptr->digit[(a_ptr->base+i) % BU_DIGITS]);
   printf("Length: %x\n", bu_len(a_ptr));
 }
