@@ -316,6 +316,11 @@ void bu_sqr(bigunsigned *a_ptr, bigunsigned *b_ptr) {
   bu_mul(a_ptr, b_ptr, b_ptr);
 }
 
+// a *= a
+void bu_sqr_ip(bigunsigned *a_ptr) {
+  bu_mul_ip(a_ptr, a_ptr);
+}
+
 // Return the length in bits (should always be less or equal to 32*a->used)
 uint16_t bu_len(bigunsigned *a_ptr) {
   if (a_ptr->used== 0) return 0;

@@ -119,5 +119,10 @@ int main() {
   bu_sqr(&a, &b);
   bu_dbg_printf(&a);
 
+  printf("Squaring DEADBEEF DEADBEEF in place...\n");
+  bu_readhex(&a, "DEADBEEF DEADBEEF");
+  bu_sqr_ip(&a);
+  bu_dbg_printf(&a);
+
   return 0;
 }
