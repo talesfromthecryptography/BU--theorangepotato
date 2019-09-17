@@ -85,5 +85,10 @@ int main() {
   bu_mul_digit(&b, &a, 2);
   bu_dbg_printf(&b);
 
+  printf("Multiplying by digit (2) in place...\n");
+  bu_readhex(&a, "FFFFE001 DEADBEEF");
+  bu_mul_digit_ip(&a, 2);
+  bu_dbg_printf(&a);
+
   return 0;
 }

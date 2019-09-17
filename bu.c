@@ -214,6 +214,26 @@ void bu_mul_digit(bigunsigned *a_ptr, bigunsigned *b_ptr, uint32_t d) {
   bu_add(a_ptr, &sum, &carries);
 }
 
+// a *= d
+void bu_mul_digit_ip(bigunsigned *a_ptr, uint32_t d) {
+  uint8_t pos = 0;
+  uint32_t res_lo, res_hi;
+  uint64_t res, d_64 = (uint64_t)d;
+  bigunsigned carries, sum;
+  bu_clear(&carries);
+  bu_clear(&sum);
+  while (pos != (uint8_t)(a_ptr->base + a_ptr->used)) {
+    res = (uint64_t)a_ptr->digit[pos + a_ptr->base] * d_64;
+    sum.digit[pos]= (uint32_t)res;
+    carries.digit[pos] = (uint32_t)(res >> 32);
+    pos++;
+  }
+  sum.used = carries.used = pos;
+
+  bu_shl_ip(&carries, 32);
+  bu_add(a_ptr, &sum, &carries);
+}
+
 // Return the length in bits (should always be less or equal to 32*a->used)
 uint16_t bu_len(bigunsigned *a_ptr) {
   if (a_ptr->used== 0) return 0;
