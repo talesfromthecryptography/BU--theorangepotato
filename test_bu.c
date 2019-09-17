@@ -80,5 +80,10 @@ int main() {
   bu_shr(&d, &c, 33);
   bu_dbg_printf(&d);
 
+  printf("Multiplying by digit (2)...\n");
+  bu_readhex(&a, "FFFFE001 DEADBEEF");
+  bu_mul_digit(&b, &a, 2);
+  bu_dbg_printf(&b);
+
   return 0;
 }
