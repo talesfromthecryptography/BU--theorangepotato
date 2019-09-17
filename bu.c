@@ -234,6 +234,78 @@ void bu_mul_digit_ip(bigunsigned *a_ptr, uint32_t d) {
   bu_add(a_ptr, &sum, &carries);
 }
 
+// a = b*c
+void bu_mul(bigunsigned *a_ptr, bigunsigned *b_ptr, bigunsigned *c_ptr) {
+  bigunsigned shorter, longer;
+  if (b_ptr->used <= c_ptr->used) {
+    bu_cpy(&shorter, b_ptr);
+    bu_cpy(&longer, c_ptr);
+  } else {
+    bu_cpy(&shorter, c_ptr);
+    bu_cpy(&longer, b_ptr);
+  }
+
+  bigunsigned carry, sum;
+  bu_clear(&carry);
+  bu_clear(&sum);
+  while(shorter.used) {
+    if(shorter.digit[shorter.base] & 0x1) {
+      bu_carry_save_add(&carry, &sum, &longer, &carry, &sum);
+    }
+    bu_shr_ip(&shorter, 1);
+    bu_shl_ip(&longer, 1);
+  }
+
+  bu_add(a_ptr, &carry, &sum);
+}
+
+// sum = x1 ^ x2 ^ x3
+// carry = (x1 & x2) | (x1 & x3) | (x2 & x3)
+// Performs a carry-save addition
+void bu_carry_save_add(bigunsigned *carry, bigunsigned *sum, bigunsigned *x1, bigunsigned *x2, bigunsigned *x3) {
+  uint8_t pos = 0;
+  // uint32_t x1, x2, x3;
+  while (pos < x1->used && pos < x2->used && pos < x3->used) {
+    uint32_t x1_32 = x1->digit[x1->base + pos], x2_32 = x2->digit[x2->base + pos], x3_32 = x3->digit[x3->base + pos];
+    sum->digit[sum->base + pos] = x1_32 ^ x2_32 ^ x3_32;
+    carry->digit[carry->base + pos] = (x1_32 & x2_32) | (x1_32 & x3_32) | (x2_32 & x3_32);
+    pos++;
+  }
+  while (pos < x1->used && pos < x2->used) {
+    uint32_t x1_32 = x1->digit[x1->base + pos], x2_32 = x2->digit[x2->base + pos];
+    sum->digit[sum->base + pos] = x1_32 ^ x2_32;
+    carry->digit[carry->base + pos] = x1_32 & x2_32;
+    pos++;
+  }
+  while (pos < x1->used && pos < x3->used) {
+    uint32_t x1_32 = x1->digit[x1->base + pos], x3_32 = x3->digit[x3->base + pos];
+    sum->digit[sum->base + pos] = x1_32 ^ x3_32;
+    carry->digit[carry->base + pos] = x1_32 & x3_32;
+    pos++;
+  }
+  while (pos < x2->used && pos < x3->used) {
+    uint32_t x2_32 = x2->digit[x2->base + pos], x3_32 = x3->digit[x3->base + pos];
+    sum->digit[sum->base + pos] = x2_32 ^ x3_32;
+    carry->digit[carry->base + pos] = x2_32 & x3_32;
+    pos++;
+  }
+  while (pos < x1->used) {
+    sum->digit[sum->base + pos] = x1->digit[x1->base + pos];
+    pos++;
+  }
+  while (pos < x2->used) {
+    sum->digit[sum->base + pos] = x2->digit[x2->base + pos];
+    pos++;
+  }
+  while (pos < x3->used) {
+    sum->digit[sum->base + pos] = x3->digit[x3->base + pos];
+    pos++;
+  }
+  carry->used = pos;
+  sum->used = pos;
+  bu_shl_ip(carry, 1);
+}
+
 // Return the length in bits (should always be less or equal to 32*a->used)
 uint16_t bu_len(bigunsigned *a_ptr) {
   if (a_ptr->used== 0) return 0;

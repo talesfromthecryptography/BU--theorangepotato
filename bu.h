@@ -53,6 +53,10 @@ void bu_mul_digit_ip(bigunsigned *a_ptr, uint32_t d);
 void bu_mul(bigunsigned *a_ptr, bigunsigned *b_ptr, bigunsigned *c_ptr);
 // a *= b
 void bu_mul_ip(bigunsigned *a_ptr, bigunsigned *b_ptr);
+// carry = x1 ^ x2 ^ x3
+// sum = (x1 & x2) | (x1 & x3) | (x2 & x3)
+// Performs a carry-save addition
+void bu_carry_save_add(bigunsigned *carry, bigunsigned *sum, bigunsigned *x1, bigunsigned *x2, bigunsigned *x3);
 
 // a = b^2
 void bu_sqr(bigunsigned *a_ptr, bigunsigned *b_ptr);

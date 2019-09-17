@@ -90,5 +90,17 @@ int main() {
   bu_mul_digit_ip(&a, 2);
   bu_dbg_printf(&a);
 
+  printf("Multiplying by 2...\n");
+  bu_readhex(&b, "FFFFE001 DEADBEEF");
+  bu_readhex(&c, "2");
+  bu_mul(&a, &b, &c);
+  bu_dbg_printf(&a);
+
+  printf("Multiplying by DEADBEEEF DEADBEEF...\n");
+  bu_readhex(&b, "DEADBEEF DEADBEEF");
+  bu_readhex(&c, "DEADBEEF DEADBEEF");
+  bu_mul(&a, &b, &c);
+  bu_dbg_printf(&a);
+
   return 0;
 }
