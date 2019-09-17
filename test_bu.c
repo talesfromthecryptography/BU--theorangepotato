@@ -102,5 +102,10 @@ int main() {
   bu_mul(&a, &b, &c);
   bu_dbg_printf(&a);
 
+  printf("Squaring DEADBEEF DEADBEEF...\n");
+  bu_readhex(&b, "DEADBEEF DEADBEEF");
+  bu_sqr(&a, &b);
+  bu_dbg_printf(&a);
+
   return 0;
 }

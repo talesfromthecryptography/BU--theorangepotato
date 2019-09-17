@@ -306,6 +306,11 @@ void bu_carry_save_add(bigunsigned *carry, bigunsigned *sum, bigunsigned *x1, bi
   bu_shl_ip(carry, 1);
 }
 
+// a = b^2
+void bu_sqr(bigunsigned *a_ptr, bigunsigned *b_ptr) {
+  bu_mul(a_ptr, b_ptr, b_ptr);
+}
+
 // Return the length in bits (should always be less or equal to 32*a->used)
 uint16_t bu_len(bigunsigned *a_ptr) {
   if (a_ptr->used== 0) return 0;
