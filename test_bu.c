@@ -102,6 +102,18 @@ int main() {
   bu_mul(&a, &b, &c);
   bu_dbg_printf(&a);
 
+  printf("Multiplying by 2 in place...\n");
+  bu_readhex(&a, "FFFFE001 DEADBEEF");
+  bu_readhex(&b, "2");
+  bu_mul_ip(&a, &b);
+  bu_dbg_printf(&a);
+
+  printf("Multiplying by DEADBEEEF DEADBEEF in place...\n");
+  bu_readhex(&a, "DEADBEEF DEADBEEF");
+  bu_readhex(&b, "DEADBEEF DEADBEEF");
+  bu_mul_ip(&a, &b);
+  bu_dbg_printf(&a);
+
   printf("Squaring DEADBEEF DEADBEEF...\n");
   bu_readhex(&b, "DEADBEEF DEADBEEF");
   bu_sqr(&a, &b);

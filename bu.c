@@ -259,6 +259,11 @@ void bu_mul(bigunsigned *a_ptr, bigunsigned *b_ptr, bigunsigned *c_ptr) {
   bu_add(a_ptr, &carry, &sum);
 }
 
+// a *= b
+void bu_mul_ip(bigunsigned *a_ptr, bigunsigned *b_ptr) {
+  bu_mul(a_ptr, a_ptr, b_ptr);
+}
+
 // sum = x1 ^ x2 ^ x3
 // carry = (x1 & x2) | (x1 & x3) | (x2 & x3)
 // Performs a carry-save addition
